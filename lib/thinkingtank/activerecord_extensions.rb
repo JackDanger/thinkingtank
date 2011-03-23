@@ -10,12 +10,14 @@ class << ActiveRecord::Base
         return indextank_search(false, *args)
     end
 
-    def define_index(name = nil, &block)
+    def define_index(options = {}, &block)
         include ThinkingTank::IndexMethods
         @thinkingtank_builder = ThinkingTank::Builder.new self, &block
         @indexable = true
         after_save :update_index
-        before_destroy :delete_from_index
+        unless false == options[:auto_remove]
+          before_destroy :delete_from_index
+        end
     end
 
     def is_indexable?
